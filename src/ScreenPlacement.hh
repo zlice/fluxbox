@@ -34,7 +34,7 @@ class BScreen;
 
 /**
  * Main class for strategy handling
- * This is a bridge between screen and 
+ * This is a bridge between screen and
  * the real placement strategy (rowcol, undermouse etc)
  * The placeWindow function in this class is guaranteed to succeed.
  * It holds a pointer to the real placement strategy which is
@@ -42,8 +42,8 @@ class BScreen;
  */
 class ScreenPlacement: public PlacementStrategy {
 public:
-    enum PlacementPolicy { 
-        ROWSMARTPLACEMENT, 
+    enum PlacementPolicy {
+        ROWSMARTPLACEMENT,
         COLSMARTPLACEMENT,
         COLMINOVERLAPPLACEMENT,
         ROWMINOVERLAPPLACEMENT,
@@ -52,11 +52,11 @@ public:
         AUTOTABPLACEMENT
     };
 
-    enum RowDirection { 
+    enum RowDirection {
         LEFTRIGHT, ///< from left to right
         RIGHTLEFT  ///< from right to left
     };
-    enum ColumnDirection { 
+    enum ColumnDirection {
         TOPBOTTOM,  ///< from top to bottom
         BOTTOMTOP   ///< from bottom to top
     };

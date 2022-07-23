@@ -43,14 +43,14 @@ using std::cerr;
 using std::endl;
 
 ScreenPlacement::ScreenPlacement(BScreen &screen):
-    m_row_direction(screen.resourceManager(), LEFTRIGHT, 
-                    screen.name()+".rowPlacementDirection", 
+    m_row_direction(screen.resourceManager(), LEFTRIGHT,
+                    screen.name()+".rowPlacementDirection",
                     screen.altName()+".RowPlacementDirection"),
-    m_col_direction(screen.resourceManager(), TOPBOTTOM, 
-                    screen.name()+".colPlacementDirection", 
+    m_col_direction(screen.resourceManager(), TOPBOTTOM,
+                    screen.name()+".colPlacementDirection",
                     screen.altName()+".ColPlacementDirection"),
-    m_placement_policy(screen.resourceManager(), ROWMINOVERLAPPLACEMENT, 
-                       screen.name()+".windowPlacement", 
+    m_placement_policy(screen.resourceManager(), ROWMINOVERLAPPLACEMENT,
+                       screen.name()+".windowPlacement",
                        screen.altName()+".WindowPlacement"),
     m_old_policy(ROWSMARTPLACEMENT),
     m_screen(screen)

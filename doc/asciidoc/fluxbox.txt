@@ -4,7 +4,7 @@ Henrik Kinnunen <fluxgen@fluxbox.org>
 v1.3.7, 08 February 2015
 :man source:   fluxbox.txt
 :man version:  {revision}
-:man manual:   Fluxbox Manual  
+:man manual:   Fluxbox Manual
 
 NAME
 ----
@@ -475,7 +475,7 @@ By default, this menu contains:
 
 *Remember...*:::
 Specify which window settings should be stored in the `apps' file and
-resumed the next time this window is opened. 
+resumed the next time this window is opened.
 +
 Specifically the setting you may store are:
 +
@@ -740,7 +740,7 @@ There are three more settings in the ``Focus Model'' menu:
 
 TAB OPTIONS
 -----------
-This section of fluxbox configuration menu lets you configure many features of 
+This section of fluxbox configuration menu lets you configure many features of
 tabs. Inside of it there are three main options:
 
 *Placement*:::
@@ -1060,7 +1060,7 @@ whenever the mouse moves over them, but only when the mouse is moving. With
 area, even if this is due to layer changes, window movement, changing desktops, closing windows, etc.
 +
 Default: *ClickToFocus*
-      
+
 *session.screen0.autoRaise*: 'boolean'::
 When True, this setting automatically raises any window that gains focus.
 +
