@@ -165,6 +165,8 @@ fluxbox_SOURCES = \
 	src/AttentionNoticeHandler.hh \
 	src/CascadePlacement.cc \
 	src/CascadePlacement.hh \
+	src/CenterPlacement.cc \
+	src/CenterPlacement.hh \
 	src/ClientMenu.cc \
 	src/ClientMenu.hh \
 	src/ClientPattern.cc \

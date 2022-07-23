@@ -24,6 +24,7 @@
 #include "RowSmartPlacement.hh"
 #include "MinOverlapPlacement.hh"
 #include "UnderMousePlacement.hh"
+#include "CenterPlacement.hh"
 #include "ColSmartPlacement.hh"
 #include "CascadePlacement.hh"
 
@@ -81,6 +82,9 @@ bool ScreenPlacement::placeWindow(const FluxboxWindow &win, int head,
             break;
         case UNDERMOUSEPLACEMENT:
             m_strategy.reset(new UnderMousePlacement());
+            break;
+        case CENTERPLACEMENT:
+            m_strategy.reset(new CenterPlacement());
             break;
         case AUTOTABPLACEMENT:
             m_strategy.reset(0);
@@ -197,6 +201,8 @@ std::string FbTk::Resource<ScreenPlacement::PlacementPolicy>::getString() const 
         return "ColMinOverlapPlacement";
     case ScreenPlacement::UNDERMOUSEPLACEMENT:
         return "UnderMousePlacement";
+    case ScreenPlacement::CENTERPLACEMENT:
+        return "CenterPlacement";
     case ScreenPlacement::CASCADEPLACEMENT:
         return "CascadePlacement";
     case ScreenPlacement::AUTOTABPLACEMENT:
@@ -218,6 +224,8 @@ void FbTk::Resource<ScreenPlacement::PlacementPolicy>::setFromString(const char 
         *(*this) = ScreenPlacement::COLMINOVERLAPPLACEMENT;
     else if (strcasecmp("UnderMousePlacement", str) == 0)
         *(*this) = ScreenPlacement::UNDERMOUSEPLACEMENT;
+    else if (strcasecmp("CenterPlacement", str) == 0)
+        *(*this) = ScreenPlacement::CENTERPLACEMENT;
     else if (strcasecmp("CascadePlacement", str) == 0)
         *(*this) = ScreenPlacement::CASCADEPLACEMENT;
     else if (strcasecmp("AutotabPlacement", str) == 0)
