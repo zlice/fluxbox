@@ -256,8 +256,10 @@ void IconButton::clientTitleChanged() {
 void IconButton::setupWindow() {
     m_icon_window.clear();
     FbTk::FbString title = m_win.title().logical();
+    #if USE_TOOLBAR
     if (m_win.fbwindow() && m_win.fbwindow()->isIconic())
         title = IconbarTool::iconifiedPrefix() + title + IconbarTool::iconifiedSuffix();
+    #endif
     setText(title);
     FbTk::TextButton::clear();
 }
