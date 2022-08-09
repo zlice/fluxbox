@@ -300,6 +300,11 @@ IconbarTool::IconbarTool(const FbTk::FbWindow &parent, IconbarTheme &theme,
     FbTk::RefCount<FbTk::Command<void> > ers(new FbTk::SimpleCommand<IconbarTool>(*this, &IconbarTool::emitResizeSig));
     m_resizeSig_timer.setCommand(ers);
 
+    m_locker_timer.setTimeout(IconButton::updateLaziness() / 10); // 10millisec
+    m_locker_timer.fireOnce(true);
+    FbTk::RefCount<FbTk::Command<void> > usig(new FbTk::SimpleCommand<IconbarTool>(*this, &IconbarTool::unlockSig));
+    m_locker_timer.setCommand(usig);
+
     themeReconfigured();
 }
 
@@ -325,7 +330,7 @@ void IconbarTool::updateMaxSizes(unsigned int width, unsigned int height) {
 
 void IconbarTool::resize(unsigned int width, unsigned int height) {
     m_icon_container.resize(width, height);
-    updateMaxSizes(width, height);
+    //updateMaxSizes(width, height);
     renderTheme();
 }
 
@@ -333,7 +338,7 @@ void IconbarTool::moveResize(int x, int y,
                              unsigned int width, unsigned int height) {
 
     m_icon_container.moveResize(x, y, width, height);
-    updateMaxSizes(width, height);
+    //updateMaxSizes(width, height);
     renderTheme();
 }
 
@@ -393,6 +398,25 @@ void IconbarTool::setMode(string mode) {
     m_menu.reconfigure();
 }
 
+// for incremental changes, back off for a bit
+// prevents slowdown from say, making 200 windows
+void IconbarTool::resetLock() {
+    m_lock_gfx = true;
+    m_locker_timer.start();
+}
+
+void IconbarTool::unlockSig() {
+    m_lock_gfx = false;
+    //resizeSig().emit();
+    // this is what we wanted to do
+    m_icon_container.setUpdateLock(false);
+    m_icon_container.update();
+    m_icon_container.showSubwindows();
+    renderTheme();
+    update(ALIGN, NULL);
+    m_resizeSig_timer.start();
+}
+
 void IconbarTool::emitResizeSig() {
     resizeSig().emit();
 }
@@ -441,9 +465,11 @@ void IconbarTool::update(UpdateReason reason, Focusable *win) {
     switch(reason) {
         case LIST_ADD: case LIST_ORDER:
             insertWindow(*win);
+            resetLock();
             break;
         case LIST_REMOVE:
             removeWindow(*win);
+            resetLock();
             break;
         case LIST_RESET:
             reset();
@@ -455,6 +481,10 @@ void IconbarTool::update(UpdateReason reason, Focusable *win) {
     m_resizeSig_timer.start();
 
     updateMaxSizes(width(), height());
+
+    if (m_lock_gfx)
+        return;
+
     // unlock container and update graphics
     m_icon_container.setUpdateLock(false);
     m_icon_container.update();
@@ -496,13 +526,13 @@ void IconbarTool::insertWindow(Focusable &win, int pos) {
         button = makeButton(win);
     if (!button) return;
 
-    if (pos == -2) {
-        pos = 0;
-        list<Focusable *>::iterator it = m_winlist->clientList().begin(),
-                                    it_end = m_winlist->clientList().end();
-        for (; it != it_end && *it != &win; ++it)
-            pos++;
-    }
+    //if (pos == -2) {
+    //    pos = 0;
+    //    list<Focusable *>::iterator it = m_winlist->clientList().begin(),
+    //                                it_end = m_winlist->clientList().end();
+    //    for (; it != it_end && *it != &win; ++it)
+    //        pos++;
+    //}
 
     m_icon_container.insertItem(button, pos);
     m_tracker.join(button->titleChanged(), FbTk::MemFun(m_resizeSig_timer, &FbTk::Timer::start));
@@ -517,9 +547,9 @@ void IconbarTool::updateSizing() {
     m_icon_container.setBorderWidth(m_theme.border().width());
     m_icon_container.setBorderColor(m_theme.border().color());
 
-    FbTk::STLUtil::forAll(m_icons, 
-            FbTk::Compose(std::mem_fun(&IconButton::reconfigTheme), 
-                FbTk::Select2nd<IconMap::value_type>()));
+    //FbTk::STLUtil::forAll(m_icons,
+    //        FbTk::Compose(std::mem_fun(&IconButton::reconfigTheme),
+    //            FbTk::Select2nd<IconMap::value_type>()));
 
 }
 
@@ -560,7 +590,7 @@ void IconbarTool::renderButton(IconButton &button, bool clear) {
 
     button.setPixmap(*m_rc_use_pixmap);
     button.setTextPadding(*m_rc_client_padding);
-    button.reconfigTheme();
+    //button.reconfigTheme();
     if (clear)
         button.clear(); // the clear also updates transparent
 }

@@ -106,6 +106,9 @@ private:
 
     void themeReconfigured();
 
+    void resetLock();
+    void unlockSig();
+    FbTk::Timer m_locker_timer;
     FbTk::Timer m_resizeSig_timer;
     void emitResizeSig();
 
@@ -128,6 +131,7 @@ private:
     FbMenu m_menu;
     int m_alpha;
     static std::string s_iconifiedDecoration[2];
+    bool m_lock_gfx = false;
 };
 
 #endif // ICONBARTOOL_HH

@@ -148,6 +148,11 @@ FbWinFrame::FbWinFrame(BScreen &screen, unsigned int client_depth,
     m_button_size(1),
     m_shape(m_window, theme->shapePlace()) {
 
+    m_locker_timer.setTimeout(timerVal() ); // 10millisec
+    m_locker_timer.fireOnce(true);
+    FbTk::RefCount<FbTk::Command<void> > usig(new FbTk::SimpleCommand<FbWinFrame>(*this, &FbWinFrame::unlockSig));
+    m_locker_timer.setCommand(usig);
+
     init();
 }
 
@@ -155,6 +160,27 @@ FbWinFrame::~FbWinFrame() {
     removeEventHandler();
     removeAllButtons();
 }
+
+// for incremental changes, back off for a bit
+// prevents slowdown from say, making 200 windows
+void FbWinFrame::resetLock() {
+    m_lock_gfx = true;
+    m_locker_timer.start();
+}
+
+void FbWinFrame::unlockSig() {
+    m_lock_gfx = false;
+    // this is what we wanted to do
+    FbTk::Container& tabs = tabcontainer();
+    tabs.setUpdateLock(m_lock_gfx);
+    renderTabContainer();
+    applyTabContainer();
+
+    tabs.clear();
+    tabs.raise();
+    tabs.show();
+}
+
 
 bool FbWinFrame::setTabMode(TabMode tabmode) {
     if (m_tabmode == tabmode)
@@ -187,6 +213,7 @@ bool FbWinFrame::setTabMode(TabMode tabmode) {
 
     } else {
         tabs.setUpdateLock(true);
+        resetLock();
 
         tabs.setAlignment(FbTk::Container::RELATIVE);
         tabs.setOrientation(FbTk::ROT0);
@@ -200,8 +227,11 @@ bool FbWinFrame::setTabMode(TabMode tabmode) {
         }
         tabs.setBorderWidth(0);
         tabs.setMaxTotalSize(0);
-        tabs.setUpdateLock(false);
+        tabs.setUpdateLock(m_lock_gfx);
         tabs.setMaxSizePerClient(0);
+
+        if (m_lock_gfx)
+            return false;
 
         renderTabContainer();
         applyTabContainer();

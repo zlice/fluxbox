@@ -33,6 +33,7 @@
 #include "FbTk/Container.hh"
 #include "FbTk/Shape.hh"
 #include "FbTk/Signal.hh"
+#include "FbTk/Timer.hh"
 
 #include <vector>
 #include <memory>
@@ -175,6 +176,12 @@ public:
     void reconfigure();
     void setShapingClient(FbTk::FbWindow *win, bool always_update);
     void updateShape() { m_shape.update(); }
+
+    void resetLock();
+    void unlockSig();
+    FbTk::Timer m_locker_timer;
+    static unsigned int timerVal() { return 10 * FbTk::FbTime::IN_MILLISECONDS; }
+    bool m_lock_gfx = false;
 
     /**
        @name accessors

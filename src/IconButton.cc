@@ -71,8 +71,8 @@ IconButton::IconButton(const FbTk::FbWindow &parent,
 
     FbTk::EventManager::instance()->add(*this, m_icon_window);
 
-    reconfigTheme();
-    refreshEverything(false);
+    //reconfigTheme();
+    //refreshEverything(false);
 }
 
 IconButton::~IconButton() {
@@ -163,12 +163,12 @@ void IconButton::reconfigTheme() {
                            width(), height(), m_theme->texture(),
                            orientation()));
         setBackgroundPixmap(m_pm);
-    } else{
+    } else {
         m_pm.reset(0);
         setBackgroundColor(m_theme->texture().color());
     }
 
-    updateBackground(false);
+    //updateBackground(false);
 }
 
 void IconButton::reconfigAndClear() {
@@ -181,7 +181,8 @@ void IconButton::refreshEverything(bool setup) {
     Display *display = FbTk::App::instance()->display();
     int screen = m_win.screen().screenNumber();
 
-    if (m_use_pixmap && m_win.icon().pixmap().drawable() != None) {
+    if (m_use_pixmap && m_win.icon().pixmap().drawable() != None &&
+                                     width() > m_icon_window.width() ) {
         // setup icon window
         m_icon_window.show();
         unsigned int w = width();
@@ -242,7 +243,6 @@ void IconButton::refreshEverything(bool setup) {
         m_icon_window.clear();
     }
 
-
 }
 
 void IconButton::clientTitleChanged() {
@@ -251,24 +251,30 @@ void IconButton::clientTitleChanged() {
 
     if (m_has_tooltip)
         showTooltip();
+
 }
 
 void IconButton::setupWindow() {
     m_icon_window.clear();
+    //FbTk::FbString title = "wtf2";
     FbTk::FbString title = m_win.title().logical();
-    if (m_win.fbwindow() && m_win.fbwindow()->isIconic())
-        title = IconbarTool::iconifiedPrefix() + title + IconbarTool::iconifiedSuffix();
+    //#if USE_TOOLBAR
+    //if (m_win.fbwindow() && m_win.fbwindow()->isIconic())
+    //    title = IconbarTool::iconifiedPrefix() + title + IconbarTool::iconifiedSuffix();
+    //#endif
     setText(title);
     FbTk::TextButton::clear();
 }
 
 void IconButton::drawText(int x, int y, FbTk::FbDrawable *drawable) {
 
-    // offset text
-    if (m_icon_pixmap.drawable() != 0)
-        FbTk::TextButton::drawText(m_icon_window.x() + m_icon_window.width() + 1, y, drawable);
-    else
-        FbTk::TextButton::drawText(1, y, drawable);
+    if (width() > m_icon_window.width() ) {
+      // offset text
+      if (m_icon_pixmap.drawable() != 0)
+          FbTk::TextButton::drawText(m_icon_window.x() + m_icon_window.width() + 1, y, drawable);
+      else
+          FbTk::TextButton::drawText(1, y, drawable);
+    }
 }
 
 bool IconButton::setOrientation(FbTk::Orientation orient) {
