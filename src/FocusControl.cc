@@ -247,11 +247,7 @@ void FocusControl::stopCyclingFocus() {
 
     // put currently focused window to top
     if (s_focused_window) {
-        // re-focus last window to give the client a chance to redistribute the
-        // focus internally (client-side only modality)
-        s_focused_window->focus();
-        if (s_focused_window)
-            setScreenFocusedWindow(*s_focused_window);
+        setScreenFocusedWindow(*s_focused_window);
         if (s_focused_fbwindow)
             s_focused_fbwindow->raise();
     } else
